@@ -13,34 +13,6 @@ window.onload = function () {
     let title = document.getElementById('main-title');
     let section = document.getElementById('section');
 
-    // // Full Name может содержать только буквы и пробел
-    // fullName.onkeydown = (e) => {
-    //     if (!e.key.match(/^[a-zа-я\s]+$/ig)) {
-    //         return false
-    //     }
-    // }
-    // // Your username - может содержать только буквы, цифры, символ подчеркивания и тире
-    // username.onkeydown = (e) => {
-    //     if (!e.key.match(/^[а-я\w-]+$/ig)) {
-    //         return false
-    //     }
-    // }
-    // // /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/ig
-    // // Реализовать проверку введенного E-mail на корректность
-    // email.onkeydown = (e) => {
-    //     if (!e.key.match(/^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/ig)) {
-    //         return false
-    //     }
-    // }
-
-    // значение checkbox
-    checkbox.onclick = () => {
-        if (checkbox.checked) {
-            console.log('Согласен');
-        } else {
-            console.log('Не согласен');
-        }
-    }
     // Клик по кнопке Sign up
     submit.onclick = (event) => {
         let inputField = [fullName, username, email, password, repeatPass, checkbox];
@@ -76,7 +48,7 @@ window.onload = function () {
                 }
             } else if (inputField[i] === email) {
                 let emailError = document.getElementsByClassName('email-error')[0];
-                if (!email.value.match(/^[\w-]+@[a-z0-9.-]+\.[a-z]{2,6}$/ig)) {
+                if (!email.value.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6}$/ig)) {
                     email.parentElement.style.color = "red";
                     email.style.borderBottom = "1px solid red";
                     emailError.style.display = "block";
@@ -88,21 +60,32 @@ window.onload = function () {
                 }
             } else if (inputField[i] === password) { // количество символов
                 let countPass = password.value.length;
+                let passError = document.getElementsByClassName('pass-error')[0];
                 if (countPass < 8) {
                     inputField[i].parentElement.style.color = "red";
                     inputField[i].style.borderBottom = "1px solid red";
+                    break
+                } else if (!password.value.match(/^(?=.*\d)(?=.*[!@#$%^&*.,<>])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/)) {
+                    password.parentElement.style.color = "red";
+                    password.style.borderBottom = "1px solid red";
+                    passError.style.display = "block";
+                    break
                 } else {
                     inputField[i].parentElement.style.color = "#C6C6C4";
                     inputField[i].style.borderBottom = "1px solid #C6C6C4";
+                    passError.style.display = "none";
                 }
                 // проверка паролей на соответствие
             } else if (inputField[i] === repeatPass) {
+                let repassError = document.getElementsByClassName('repass-error')[0];
                 if (repeatPass.value !== password.value) {
                     inputField[i].parentElement.style.color = "red";
                     inputField[i].style.borderBottom = "1px solid red";
+                    repassError.style.display = "block";
                 } else {
                     inputField[i].parentElement.style.color = "#C6C6C4";
                     inputField[i].style.borderBottom = "1px solid #C6C6C4";
+                    repassError.style.display = "none";
                 }
             }
             // возвращает стили заполненных полей
@@ -121,6 +104,24 @@ window.onload = function () {
     section.onclick = (event) => {
         let target = event.target;
         if (target === already || target === okButton) {
+            let client = localStorage.getItem('users');
+            let user = {
+                fullName: fullName.value,
+                username: username.value,
+                email: email.value,
+                password: password.value
+            };
+            if (client) {
+                let clientArray = JSON.parse(client);
+                clientArray.push(user);
+                localStorage.setItem('users', JSON.stringify(clientArray));
+            } else {
+                let clientArray = [];
+                clientArray.push(user);
+                localStorage.setItem('users', JSON.stringify(clientArray));
+            }
+            console.log(localStorage);
+
             popup.style.display = 'none';
             username.value = '';
             password.value = '';
@@ -154,3 +155,41 @@ window.onload = function () {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+// // Full Name может содержать только буквы и пробел
+// fullName.onkeydown = (e) => {
+//     if (!e.key.match(/^[a-zа-я\s]+$/ig)) {
+//         return false
+//     }
+// }
+// // Your username - может содержать только буквы, цифры, символ подчеркивания и тире
+// username.onkeydown = (e) => {
+//     if (!e.key.match(/^[а-я\w-]+$/ig)) {
+//         return false
+//     }
+// }
+// // /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/ig
+// // Реализовать проверку введенного E-mail на корректность
+// email.onkeydown = (e) => {
+//     if (!e.key.match(/^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/ig)) {
+//         return false
+//     }
+// }
+
+// // значение checkbox
+// checkbox.onclick = () => {
+//     if (checkbox.checked) {
+//         console.log('Согласен');
+//     } else {
+//         console.log('Не согласен');
+//     }
+// }
