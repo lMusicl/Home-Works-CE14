@@ -12,6 +12,7 @@ window.onload = function () {
     let already = document.getElementById('already');
     let title = document.getElementById('main-title');
     let section = document.getElementById('section');
+    let client = localStorage.getItem('users');
 
     //блоки с ошибками
     let fnError = document.getElementsByClassName('fn-error')[0];
@@ -27,7 +28,7 @@ window.onload = function () {
     let passwordExpression = /^(?=.*\d)(?=.*[!@#$%^&*.,<>])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/;
 
     //функция проверки username
-    function checkUsername () {
+    function checkUsername() {
         if (!username.value.match(usernameExpression)) {
             username.parentElement.style.color = "red";
             username.style.borderBottom = "1px solid red";
@@ -119,28 +120,26 @@ window.onload = function () {
                 popup.style.display = 'block';
             }
         }
+        let user = {
+            fullName: fullName.value,
+            username: username.value,
+            email: email.value,
+            password: password.value
+        };
+        if (client) {
+            let clientArray = JSON.parse(client);
+            clientArray.push(user);
+            localStorage.setItem('users', JSON.stringify(clientArray));
+        } else {
+            let clientArray = [];
+            clientArray.push(user);
+            localStorage.setItem('users', JSON.stringify(clientArray));
+        }
         event.preventDefault();
     }
     section.onclick = (event) => {
         let target = event.target;
         if (target === already || target === okButton) {
-            let client = localStorage.getItem('users');
-            let user = {
-                fullName: fullName.value,
-                username: username.value,
-                email: email.value,
-                password: password.value
-            };
-            if (client) {
-                let clientArray = JSON.parse(client);
-                clientArray.push(user);
-                localStorage.setItem('users', JSON.stringify(clientArray));
-            } else {
-                let clientArray = [];
-                clientArray.push(user);
-                localStorage.setItem('users', JSON.stringify(clientArray));
-            }
-
             popup.style.display = 'none';
             username.value = '';
             password.value = '';
@@ -160,13 +159,6 @@ window.onload = function () {
                 location.reload();
             };
             //нажатие на sign in
-            //достаем ключ значение из localstorage
-            let key = JSON.parse(client);
-            for (let i = 0; i < key.length; i++) {
-                let userKey = key[i].username;
-                let passKey = key[i].password;
-                console.log(userKey, passKey);
-            }
             submit.onclick = (event) => {
                 let inputField = [username, password];
                 for (let i = 0; i < inputField.length; i++) {
@@ -176,11 +168,16 @@ window.onload = function () {
                         checkPass();
                     }
                 }
-                if (inputField[0].value && inputField[1].value) {
-                    alert(`Добро пожаловать, ${username.value}!`);
-                    username.value = '';
-                    password.value = '';
+                //достаем ключ значение из localstorage
+                let loginArray = JSON.parse(client);
+                for (let i = 0; i < loginArray.length; i++) {
+                    let userKey = loginArray[i].username;
+                    let passKey = loginArray[i].password;
+                    if (username.value === userKey && password.value === passKey) {
+                        alert(`Добро пожаловать, ${username.value}!`);
+                    }
                 }
+                alert('Неправильный логин или пароль!');
                 event.preventDefault();
             }
         }
