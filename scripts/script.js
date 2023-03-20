@@ -14,6 +14,9 @@ window.onload = function () {
     let section = document.getElementById('section');
     let client = localStorage.getItem('users');
 
+    //переменная для остановки функции
+    let result = true;
+
     //блоки с ошибками
     let fnError = document.getElementsByClassName('fn-error')[0];
     let unError = document.getElementsByClassName('un-error')[0];
@@ -33,11 +36,12 @@ window.onload = function () {
             username.parentElement.style.color = "red";
             username.style.borderBottom = "1px solid red";
             unError.style.display = "block";
-            return false
+            result = false;
         } else {
             username.parentElement.style.color = "#C6C6C4";
             username.style.borderBottom = "1px solid #C6C6C4";
             unError.style.display = "none";
+            result = true;
         }
     }
 
@@ -49,16 +53,17 @@ window.onload = function () {
             password.parentElement.style.color = "red";
             password.style.borderBottom = "1px solid red";
             passError.style.display = "block";
-            return false
+            result = false;
         } else if (!password.value.match(passwordExpression)) {
             password.parentElement.style.color = "red";
             password.style.borderBottom = "1px solid red";
             passError.style.display = "block";
-            return false
+            result = false;
         } else {
             password.parentElement.style.color = "#C6C6C4";
             password.style.borderBottom = "1px solid #C6C6C4";
             passError.style.display = "none";
+            result = true;
         }
     }
 
@@ -68,15 +73,12 @@ window.onload = function () {
         // проверяет каждое значение
         for (let i = 0; i < inputField.length; i++) {
             // проверяет заполнено ли поле
-            if (!inputField[i].value) {
-                inputField[i].parentElement.style.color = "red";
-                inputField[i].style.borderBottom = "1px solid red";
-            } else if (inputField[i] === fullName) {
+            if (inputField[i] === fullName) {
                 if (!fullName.value.match(fullNameExpression)) {
                     fullName.parentElement.style.color = "red";
                     fullName.style.borderBottom = "1px solid red";
                     fnError.style.display = "block";
-                    break
+                    return false
                 } else {
                     fullName.parentElement.style.color = "#C6C6C4";
                     fullName.style.borderBottom = "1px solid #C6C6C4";
@@ -84,12 +86,15 @@ window.onload = function () {
                 }
             } else if (inputField[i] === username) {
                 checkUsername();
+                if (result === false) {
+                    return false
+                }
             } else if (inputField[i] === email) {
                 if (!email.value.match(emailExpression)) {
                     email.parentElement.style.color = "red";
                     email.style.borderBottom = "1px solid red";
                     emailError.style.display = "block";
-                    break
+                    return false
                 } else {
                     email.parentElement.style.color = "#C6C6C4";
                     email.style.borderBottom = "1px solid #C6C6C4";
@@ -97,25 +102,26 @@ window.onload = function () {
                 }
             } else if (inputField[i] === password) { // проверка пароля
                 checkPass();
+                if (result === false) {
+                    return false
+                }
                 // проверка паролей на соответствие
             } else if (inputField[i] === repeatPass) {
                 if (repeatPass.value !== password.value) {
                     inputField[i].parentElement.style.color = "red";
                     inputField[i].style.borderBottom = "1px solid red";
                     repassError.style.display = "block";
+                    return false
                 } else {
                     inputField[i].parentElement.style.color = "#C6C6C4";
                     inputField[i].style.borderBottom = "1px solid #C6C6C4";
                     repassError.style.display = "none";
                 }
             }
-            // возвращает стили заполненных полей
-            else if (inputField[i].value && inputField[i] !== checkbox) {
-                inputField[i].parentElement.style.color = "#C6C6C4";
-                inputField[i].style.borderBottom = "1px solid #C6C6C4";
-                // проверяет чекбокс на галочку
-            } else if (!checkbox.checked) {
+            // проверяет чекбокс на галочку
+            else if (!checkbox.checked) {
                 checkbox.parentElement.style.color = "red";
+                return false
             } else {
                 popup.style.display = 'block';
             }
@@ -164,8 +170,14 @@ window.onload = function () {
                 for (let i = 0; i < inputField.length; i++) {
                     if (inputField[i] === username) {
                         checkUsername();
+                        if (result === false) {
+                            return false
+                        }
                     } else if (inputField[i] === password) {
                         checkPass();
+                        if (result === false) {
+                            return false
+                        }
                     }
                 }
                 //достаем ключ значение из localstorage
