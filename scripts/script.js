@@ -13,6 +13,54 @@ window.onload = function () {
     let title = document.getElementById('main-title');
     let section = document.getElementById('section');
 
+    //блоки с ошибками
+    let fnError = document.getElementsByClassName('fn-error')[0];
+    let unError = document.getElementsByClassName('un-error')[0];
+    let emailError = document.getElementsByClassName('email-error')[0];
+    let passError = document.getElementsByClassName('pass-error')[0];
+    let repassError = document.getElementsByClassName('repass-error')[0];
+
+    //выражения для проверки
+    let fullNameExpression = /^[a-zа-я\s]+$/ig;
+    let usernameExpression = /^[а-я\w-]+$/ig;
+    let emailExpression = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6}$/ig;
+    let passwordExpression = /^(?=.*\d)(?=.*[!@#$%^&*.,<>])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/;
+
+    //функция проверки username
+    function checkUsername () {
+        if (!username.value.match(usernameExpression)) {
+            username.parentElement.style.color = "red";
+            username.style.borderBottom = "1px solid red";
+            unError.style.display = "block";
+            return false
+        } else {
+            username.parentElement.style.color = "#C6C6C4";
+            username.style.borderBottom = "1px solid #C6C6C4";
+            unError.style.display = "none";
+        }
+    }
+
+
+    //функция проверки пароля
+    function checkPass() {
+        let countPass = password.value.length;
+        if (countPass < 8) {
+            password.parentElement.style.color = "red";
+            password.style.borderBottom = "1px solid red";
+            passError.style.display = "block";
+            return false
+        } else if (!password.value.match(passwordExpression)) {
+            password.parentElement.style.color = "red";
+            password.style.borderBottom = "1px solid red";
+            passError.style.display = "block";
+            return false
+        } else {
+            password.parentElement.style.color = "#C6C6C4";
+            password.style.borderBottom = "1px solid #C6C6C4";
+            passError.style.display = "none";
+        }
+    }
+
     // Клик по кнопке Sign up
     submit.onclick = (event) => {
         let inputField = [fullName, username, email, password, repeatPass, checkbox];
@@ -23,8 +71,7 @@ window.onload = function () {
                 inputField[i].parentElement.style.color = "red";
                 inputField[i].style.borderBottom = "1px solid red";
             } else if (inputField[i] === fullName) {
-                let fnError = document.getElementsByClassName('fn-error')[0];
-                if (!fullName.value.match(/^[a-zа-я\s]+$/ig)) {
+                if (!fullName.value.match(fullNameExpression)) {
                     fullName.parentElement.style.color = "red";
                     fullName.style.borderBottom = "1px solid red";
                     fnError.style.display = "block";
@@ -35,20 +82,9 @@ window.onload = function () {
                     fnError.style.display = "none";
                 }
             } else if (inputField[i] === username) {
-                let unError = document.getElementsByClassName('un-error')[0];
-                if (!username.value.match(/^[а-я\w-]+$/ig)) {
-                    username.parentElement.style.color = "red";
-                    username.style.borderBottom = "1px solid red";
-                    unError.style.display = "block";
-                    break
-                } else {
-                    username.parentElement.style.color = "#C6C6C4";
-                    username.style.borderBottom = "1px solid #C6C6C4";
-                    unError.style.display = "none";
-                }
+                checkUsername();
             } else if (inputField[i] === email) {
-                let emailError = document.getElementsByClassName('email-error')[0];
-                if (!email.value.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6}$/ig)) {
+                if (!email.value.match(emailExpression)) {
                     email.parentElement.style.color = "red";
                     email.style.borderBottom = "1px solid red";
                     emailError.style.display = "block";
@@ -58,26 +94,10 @@ window.onload = function () {
                     email.style.borderBottom = "1px solid #C6C6C4";
                     emailError.style.display = "none";
                 }
-            } else if (inputField[i] === password) { // количество символов
-                let countPass = password.value.length;
-                let passError = document.getElementsByClassName('pass-error')[0];
-                if (countPass < 8) {
-                    inputField[i].parentElement.style.color = "red";
-                    inputField[i].style.borderBottom = "1px solid red";
-                    break
-                } else if (!password.value.match(/^(?=.*\d)(?=.*[!@#$%^&*.,<>])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/)) {
-                    password.parentElement.style.color = "red";
-                    password.style.borderBottom = "1px solid red";
-                    passError.style.display = "block";
-                    break
-                } else {
-                    inputField[i].parentElement.style.color = "#C6C6C4";
-                    inputField[i].style.borderBottom = "1px solid #C6C6C4";
-                    passError.style.display = "none";
-                }
+            } else if (inputField[i] === password) { // проверка пароля
+                checkPass();
                 // проверка паролей на соответствие
             } else if (inputField[i] === repeatPass) {
-                let repassError = document.getElementsByClassName('repass-error')[0];
                 if (repeatPass.value !== password.value) {
                     inputField[i].parentElement.style.color = "red";
                     inputField[i].style.borderBottom = "1px solid red";
@@ -120,29 +140,40 @@ window.onload = function () {
                 clientArray.push(user);
                 localStorage.setItem('users', JSON.stringify(clientArray));
             }
-            console.log(localStorage);
 
             popup.style.display = 'none';
             username.value = '';
             password.value = '';
             // удаляет ненужные поля
-            let deleteArray = [fullName, email, repeatPass, checkbox, already];
+            let deleteArray = [fullName, email, repeatPass, checkbox];
             for (let item of deleteArray) {
                 item.parentElement.remove();
             }
+            // поправляем стили второй страницы
+            document.getElementsByClassName('main-container')[0].style.gridTemplateRows = '56px 81px 360px 25px';
+            document.getElementsByClassName('main-image')[0].style.gridRow = '1/5';
+            already.textContent = "Registration";
             title.textContent = 'Log in to the system';
             submit.textContent = 'Sign In'
+            //перезагрузка страницы при нажатии на Registration
+            already.onclick = () => {
+                location.reload();
+            };
+            //нажатие на sign in
+            //достаем ключ значение из localstorage
+            let key = JSON.parse(client);
+            for (let i = 0; i < key.length; i++) {
+                let userKey = key[i].username;
+                let passKey = key[i].password;
+                console.log(userKey, passKey);
+            }
             submit.onclick = (event) => {
                 let inputField = [username, password];
                 for (let i = 0; i < inputField.length; i++) {
-                    if (!inputField[i].value) {
-                        alert(`Заполните поле ${inputField[i].parentElement.innerText}`);
-                        inputField[i].parentElement.style.color = "red";
-                        inputField[i].style.borderBottom = "1px solid red";
-                        break;
-                    } else if (inputField[i].value) {
-                        inputField[i].parentElement.style.color = "#C6C6C4";
-                        inputField[i].style.borderBottom = "1px solid #C6C6C4";
+                    if (inputField[i] === username) {
+                        checkUsername();
+                    } else if (inputField[i] === password) {
+                        checkPass();
                     }
                 }
                 if (inputField[0].value && inputField[1].value) {
@@ -155,14 +186,6 @@ window.onload = function () {
         }
     }
 }
-
-
-
-
-
-
-
-
 
 
 // // Full Name может содержать только буквы и пробел
