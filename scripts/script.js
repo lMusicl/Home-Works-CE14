@@ -13,26 +13,22 @@ window.onload = function () {
     let title = document.getElementById('main-title');
     let section = document.getElementById('section');
     let client = localStorage.getItem('users');
-    let mainText = document.getElementsByClassName('main-text')[0];
-
+    let mainText = document.querySelector('.main-text');
     //переменная для остановки функции
     let result = true;
-
     //блоки с ошибками
-    let fnError = document.getElementsByClassName('fn-error')[0];
-    let unError = document.getElementsByClassName('un-error')[0];
-    let emailError = document.getElementsByClassName('email-error')[0];
-    let passError = document.getElementsByClassName('pass-error')[0];
-    let repassError = document.getElementsByClassName('repass-error')[0];
-    let loginUnError = document.getElementsByClassName('login-un-error')[0];
-    let loginPassError = document.getElementsByClassName('login-pass-error')[0];
-
+    let fnError = document.querySelector('.fn-error');
+    let unError = document.querySelector('.un-error');
+    let emailError = document.querySelector('.email-error');
+    let passError = document.querySelector('.pass-error');
+    let repassError = document.querySelector('.repass-error');
+    let loginUnError = document.querySelector('.login-un-error');
+    let loginPassError = document.querySelector('.login-pass-error');
     //выражения для проверки
     let fullNameExpression = /^[a-zа-я\s]+$/ig;
     let usernameExpression = /^[а-я\w-]+$/ig;
     let emailExpression = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6}$/ig;
     let passwordExpression = /^(?=.*\d)(?=.*[!@#$%^&*.,<>])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/;
-
     //функция проверки username
     function checkUsername() {
         if (!username.value.match(usernameExpression)) {
@@ -47,8 +43,6 @@ window.onload = function () {
             result = true;
         }
     }
-
-
     //функция проверки пароля
     function checkPass() {
         let countPass = password.value.length;
@@ -69,7 +63,6 @@ window.onload = function () {
             result = true;
         }
     }
-
     // Клик по кнопке Sign up
     submit.onclick = (event) => {
         let inputField = [fullName, username, email, password, repeatPass, checkbox];
@@ -146,10 +139,13 @@ window.onload = function () {
         }
         event.preventDefault();
     }
+    //нажатие либо "Уже есть аккаунт" либо "Ок" во всплывающем окне
     section.onclick = (event) => {
         let target = event.target;
         if (target === already || target === okButton) {
+            //убираем окно
             popup.style.display = 'none';
+            //очищаем поля
             username.value = '';
             password.value = '';
             // удаляет ненужные поля
@@ -158,8 +154,8 @@ window.onload = function () {
                 item.parentElement.remove();
             }
             // поправляем стили второй страницы
-            document.getElementsByClassName('main-container')[0].style.gridTemplateRows = '56px 81px 360px 25px';
-            document.getElementsByClassName('main-image')[0].style.gridRow = '1/5';
+            document.querySelector('.main-container').style.gridTemplateRows = '56px 81px 360px 25px';
+            document.querySelector('.main-image').style.gridRow = '1/5';
             already.textContent = "Registration";
             title.textContent = 'Log in to the system';
             submit.textContent = 'Sign In'
@@ -189,7 +185,6 @@ window.onload = function () {
                     let userKey = loginArray[i].username;
                     let passKey = loginArray[i].password;
                     let fnKey = loginArray[i].fullName;
-                    result = false;
                     if (username.value !== userKey) {
                         username.parentElement.style.color = "red";
                         username.style.borderBottom = "1px solid red";
@@ -198,6 +193,10 @@ window.onload = function () {
                         password.parentElement.style.color = "red";
                         password.style.borderBottom = "1px solid red";
                         loginPassError.style.display = "block";
+                        username.parentElement.style.color = "#C6C6C4";
+                        username.style.borderBottom = "1px solid #C6C6C4";
+                        loginUnError.style.display = "none";
+                        return false
                     } else if (username.value === userKey && password.value === passKey) {
                         alert(`Добро пожаловать, ${username.value}!`);
                         title.textContent = "Welcome, " + fnKey + "!";
