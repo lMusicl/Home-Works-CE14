@@ -193,6 +193,6 @@ form .checkbox {
     font-size: 12px;
 }
 
-.fn-error, .un-error, .email-error, .pass-error, .repass-error {
+.fn-error, .un-error, .email-error, .pass-error, .repass-error, .login-un-error, .login-pass-error {
     display: none;
 }

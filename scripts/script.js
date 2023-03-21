@@ -13,6 +13,7 @@ window.onload = function () {
     let title = document.getElementById('main-title');
     let section = document.getElementById('section');
     let client = localStorage.getItem('users');
+    let mainText = document.getElementsByClassName('main-text')[0];
 
     //переменная для остановки функции
     let result = true;
@@ -23,6 +24,8 @@ window.onload = function () {
     let emailError = document.getElementsByClassName('email-error')[0];
     let passError = document.getElementsByClassName('pass-error')[0];
     let repassError = document.getElementsByClassName('repass-error')[0];
+    let loginUnError = document.getElementsByClassName('login-un-error')[0];
+    let loginPassError = document.getElementsByClassName('login-pass-error')[0];
 
     //выражения для проверки
     let fullNameExpression = /^[a-zа-я\s]+$/ig;
@@ -185,43 +188,36 @@ window.onload = function () {
                 for (let i = 0; i < loginArray.length; i++) {
                     let userKey = loginArray[i].username;
                     let passKey = loginArray[i].password;
-                    if (username.value === userKey && password.value === passKey) {
+                    let fnKey = loginArray[i].fullName;
+                    result = false;
+                    if (username.value !== userKey) {
+                        username.parentElement.style.color = "red";
+                        username.style.borderBottom = "1px solid red";
+                        loginUnError.style.display = "block";
+                    } else if (username.value === userKey && password.value !== passKey) {
+                        password.parentElement.style.color = "red";
+                        password.style.borderBottom = "1px solid red";
+                        loginPassError.style.display = "block";
+                    } else if (username.value === userKey && password.value === passKey) {
                         alert(`Добро пожаловать, ${username.value}!`);
+                        title.textContent = "Welcome, " + fnKey + "!";
+                        username.value = "";
+                        password.value = "";
+                        loginUnError.style.display = "none";
+                        loginPassError.style.display = "none";
+                        submit.textContent = 'Exit'
+                        username.parentElement.remove();
+                        password.parentElement.remove();
+                        already.parentElement.remove();
+                        mainText.remove();
+                        submit.onclick = () => {
+                            location.reload();
+                        }
+                        return false
                     }
                 }
-                alert('Неправильный логин или пароль!');
                 event.preventDefault();
             }
         }
     }
 }
-
-
-// // Full Name может содержать только буквы и пробел
-// fullName.onkeydown = (e) => {
-//     if (!e.key.match(/^[a-zа-я\s]+$/ig)) {
-//         return false
-//     }
-// }
-// // Your username - может содержать только буквы, цифры, символ подчеркивания и тире
-// username.onkeydown = (e) => {
-//     if (!e.key.match(/^[а-я\w-]+$/ig)) {
-//         return false
-//     }
-// }
-// // /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/ig
-// // Реализовать проверку введенного E-mail на корректность
-// email.onkeydown = (e) => {
-//     if (!e.key.match(/^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,6}$/ig)) {
-//         return false
-//     }
-// }
-
-// // значение checkbox
-// checkbox.onclick = () => {
-//     if (checkbox.checked) {
-//         console.log('Согласен');
-//     } else {
-//         console.log('Не согласен');
-//     }
-// }
